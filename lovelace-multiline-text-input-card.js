@@ -266,7 +266,7 @@
 		}
 
 		callService(service) {
-			if(this.state.entity_type === 'input_text' || this.state.entity_type === 'var') {
+			if(this.state.entity_type === 'input_text' || this.state.entity_type === 'var' || this.state.entity_type === 'text') {
 				let value = (typeof this.state.service_values[service] === 'function' ? this.state.service_values[service]() : this.state.service_values[service]);
 				if(this.state.service[service]) {
 					let _this = this;
@@ -338,6 +338,7 @@
 			const supported_entity_types = [
 				'input_text',
 				'var', 		// custom component: https://community.home-assistant.io/t/custom-component-generic-variable-entities/128627
+				'text',     // MQTT text entities: https://www.home-assistant.io/integrations/text.mqtt/
 			];
 
 			const actions = {
@@ -353,6 +354,9 @@
 				},
 				'var': {
 					save: 'set',
+				},
+				'text': {
+					save: 'set_value',
 				},
 			};
 
@@ -444,6 +448,19 @@
 							throw new Error("An input_text entity must be in 'text' mode!");
 						}
 
+						if(this.state.min_length === 0 && (this.stateObj.attributes.min || 0) > 0) {
+							this.state.min_length = this.stateObj.attributes.min;
+							console.warn("Entity " + this._config.entity + " requires at least " + this.stateObj.attributes.min + " characters.");
+						}
+						if(this.state.max_length === false || this.stateObj.attributes.max < this.state.max_length) {
+							if(this.state.max_length !== false) {
+								console.warn("Entity " + this._config.entity + " allows less characters (" + this.stateObj.attributes.max + ") than desired.");
+							}
+							this.state.max_length = this.stateObj.attributes.max;
+						}
+					}
+					else if(this.state.entity_type === "text") {
+						// Handle min/max length for text entities similar to input_text
 						if(this.state.min_length === 0 && (this.stateObj.attributes.min || 0) > 0) {
 							this.state.min_length = this.stateObj.attributes.min;
 							console.warn("Entity " + this._config.entity + " requires at least " + this.stateObj.attributes.min + " characters.");

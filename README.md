@@ -1,6 +1,6 @@
 # multiline-text-input-card
 
-This is a simple lovelace card to display a multiline text input field bound on an `input_text` or `var` entity.
+This is a simple lovelace card to display a multiline text input field bound on an `input_text`, `var`, or `text` entity.
 
 However, snarky-snark's `var` [component](https://github.com/snarky-snark/home-assistant-variables/) is recommended to use since Home Assistant's `input_text` is limited to a maximum of only 255 characters. At this point I will not forget to mention that this great component is capable of so much more - have a look at it!
 
@@ -43,7 +43,7 @@ resources:
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
 | type | string | **Required** | `custom:lovelace-multiline-text-input-card`
-| entity | string | **Required** | An `input_text` or `var` entity
+| entity | string | **Required** | An `input_text`, `var`, or `text` entity
 | autosave | bool | `false` | Save text automatically one second after input
 | min_length | int | `0` | The minimum text length allowed to be saved to the entity (*)
 | max_length | int/bool | `false` | The maximum text length to be allowed (*)
@@ -78,7 +78,7 @@ You can now arrange buttons by giving them indices, beginning from the left. Tru
 
 ## Examples
 
-Don't forget to add your `input_text` or `var` entity in your `configuration.yaml`! ;)
+Don't forget to add your `input_text`, `var`, or `text` entity in your `configuration.yaml`! ;)
 
 ### Simple config example
 ```yaml
@@ -108,3 +108,14 @@ With the simplest configuration applied, min_length and max_length solely depend
 ```
 
 In this example, the min_length and max_length behaviour of the entity will be overwritten, if possible. That means, the allowed text length range can be narrowed down, but of course not increased. The card title is set manually and the save button will not be shown in favour of the enabled autosave function. The clear button will appear on the left with the paste button on the right. Last but not least, the icon of the clear button will be changed.
+
+### MQTT text entity example
+```yaml
+- type: custom:lovelace-multiline-text-input-card
+  entity: text.mqtt_notes
+  title: MQTT Notes
+  placeholder_text: 'Enter your notes here'
+  autosave: true
+```
+
+This example shows how to use the card with an MQTT text entity. The card will automatically handle the text entity in the same way as input_text entities, allowing you to edit and save text values to your MQTT broker.
